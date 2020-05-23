@@ -2,7 +2,13 @@
 
 let private testEmit divisor sound =
     fun n ->
-        if n % divisor = 0 then sound else ""
+        if n % divisor = 0 then Some sound else None
+        
+let sequence (l:list<option<'T>>): option<list<'T>> =
+    let folder (el: option<'T>) (acc: option<list<'T>>): option<list<'T>> =
+          let addEl (curr: list<'T>) = el |> Option.map (fun s -> s::curr)
+          acc |> Option.bind addEl         
+    List.foldBack folder l (Some [])
 
 let convert (number: int): string =
     let soundsToTest =
@@ -10,12 +16,13 @@ let convert (number: int): string =
           testEmit 5 "Plang"
           testEmit 7 "Plong" ]
 
-    let sounds =
+    let maybeAListOfSounds =
         soundsToTest
         |> List.map (fun emitFor -> emitFor number)
-        |> List.toSeq
-        |> String.concat ""
+        |> List.filter Option.isSome
+        |> sequence      
 
-    match sounds with
-    | "" -> string number
-    | _ -> sounds
+    match maybeAListOfSounds with
+    | None
+    | Some [] -> string number
+    | Some sounds -> sounds |> List.toSeq |> String.concat "" 

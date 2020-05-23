@@ -79,3 +79,10 @@ let ``The sound for 105 is PlingPlangPlong as it has factors 3, 5 and 7`` () =
 let ``The sound for 3125 is Plang as it has a factor 5`` () =
     convert 3125 |> should equal "Plang"
 
+[<Fact>]
+let ``Test sequence return Some`` () =
+    sequence [ Some 1; Some 2 ] |> should equal (Some [1; 2])
+
+[<Fact>]
+let ``Test sequence return None`` () =
+    sequence [ Some 1; None ] |> should equal None
