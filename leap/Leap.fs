@@ -1,6 +1,5 @@
 ﻿module Leap
 
-let private isDivisibleBy divisor = fun x -> x % divisor = 0
 let leapYear (year: int): bool =
-       isDivisibleBy 400 year
-    || ((isDivisibleBy 4 year ) && not (isDivisibleBy 100 year))
+    let isDivisibleBy divisor = year % divisor = 0
+    isDivisibleBy 400  || (isDivisibleBy 4) && not (isDivisibleBy 100)
