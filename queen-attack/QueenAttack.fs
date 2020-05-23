@@ -1,8 +1,8 @@
 ﻿module QueenAttack
 
 let create (position: int * int) =
-    let (|ValidPos|NotValidPos|) input =
-        if List.contains input [ 0 .. 7 ] then ValidPos else NotValidPos
+    let (|ValidPos|_|) input =
+        if List.contains input [ 0 .. 7 ] then Some() else None
     match position with
     | (ValidPos, ValidPos) -> true
     | _ -> false
