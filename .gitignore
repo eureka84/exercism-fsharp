@@ -1,8 +1,11 @@
-
 **/.config
 **/.exercism
 **/.fake
+**/.idea
+**/*.iml
 **/.ionide
+**/.vscode
 **/bin
 **/obj
+**/Folder.DotSettings.user
 
