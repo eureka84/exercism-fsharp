@@ -5,7 +5,9 @@ let create (position: int * int) =
     isValid (fst position) && isValid (snd position)
 
 let canAttack (queen1: int * int) (queen2: int * int) =
-    let sameCol pos1 pos2 = (snd pos1) = (snd pos2)
-    let sameRow pos1 pos2 = (fst pos1) = (fst pos2)
-    let sameDiag pos1 pos2 = abs (fst pos1 - fst pos2) = abs (snd pos1 - snd pos2)
-    sameCol queen1 queen2 || sameRow queen1 queen2 || sameDiag queen1 queen2
+    let (x1, y1) = queen1
+    let (x2, y2) = queen2
+    let sameCol = y1 = y2
+    let sameRow = x1 = x2
+    let sameDiag = abs (y1 - y2) = abs (x1 - x2)
+    sameCol || sameRow || sameDiag 
