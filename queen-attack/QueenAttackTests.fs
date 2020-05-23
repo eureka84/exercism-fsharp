@@ -68,4 +68,3 @@ let ``Can attack on fourth diagonal`` () =
     let whiteQueen = (1, 7)
     let blackQueen = (0, 6)
     canAttack blackQueen whiteQueen |> should equal true
-
