@@ -7,8 +7,8 @@ let private testEmit divisor sound =
 let combine (o1: string option) (o2: string option) =
     match o1, o2 with
     | Some s1, Some s2 -> [s1; s2] |> String.concat "" |> Some
-    | Some s1, None -> Some s1
-    | None, Some s2 -> Some s2
+    | Some _, None -> o1
+    | None, Some _ -> o2
     | None, None -> None
     
 let convert (number: int): string =
