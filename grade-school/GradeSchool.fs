@@ -4,24 +4,18 @@ type School = Map<int, string list>
 
 let empty: School = Map.empty
 
-let studentsForGrade (grade:int) (school:School): string list option =
-    Map.tryFind grade school
-    
-let add (student: string) (grade: int) (school: School): School =
-    match studentsForGrade grade school with
-    | Some students ->
-        let sortedStudents = student :: students |> List.sort
-        Map.add grade sortedStudents school
-    | None ->
-        Map.add grade (student :: []) school
+let grade (number: int) (school: School): string list =
+    match Map.tryFind number school with
+    | Some students -> students
+    | None -> []
+
+let add (student: string) (gradeNumber: int) (school: School): School =
+    let students = grade gradeNumber school
+    let sortedStudents = student :: students |> List.sort
+    Map.add gradeNumber sortedStudents school
 
 let roster (school: School): string list =
     school
     |> Map.toSeq
     |> Seq.collect snd
-    |> Seq.toList    
-
-let grade (number: int) (school: School): string list =
-    match studentsForGrade number school with
-    | Some students -> List.sort students
-    | None -> []
+    |> Seq.toList
