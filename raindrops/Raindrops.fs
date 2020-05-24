@@ -10,15 +10,18 @@ let convert (number: int): string =
           testEmit 5 "Plang"
           testEmit 7 "Plong" ]
 
+    let combine (o1: string option) (o2: string option) =
+        match o1, o2 with
+        | Some s1, Some s2 -> [s1; s2] |> String.concat "" |> Some
+        | Some s1, None -> Some s1
+        | None, Some s2 -> Some s2
+        | None, None -> None
+    
     let sounds =
         soundsToTest
         |> List.map (fun emitFor -> emitFor number)
-        |> List.filter Option.isSome
-        |> List.map Option.get
+        |> List.fold combine None
 
     match sounds with
-    | [] -> string number
-    | _ ->
-        sounds
-        |> List.toSeq
-        |> String.concat ""
+    | None  -> string number
+    | Some s -> s
