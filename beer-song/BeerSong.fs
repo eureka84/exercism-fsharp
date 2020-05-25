@@ -3,35 +3,25 @@
 let bottles i =
     match i with
     | 1 -> "1 bottle"
-    | 0 -> "no more bottles"
     | _ -> sprintf "%i bottles" i
 
-let capitalize (s: string)  =
-    s.Substring(0, 1).ToUpper() + 
-        ( if s.Length > 1 then s.Substring(1).ToLower() else "");
 let firstLine bottlesNumber =
-    bottles bottlesNumber
-    |> fun x -> sprintf "%s of beer on the wall, %s of beer." x x
-    |> capitalize
+    match bottlesNumber with
+    | 0 -> "No more bottles of beer on the wall, no more bottles of beer."
+    | _ -> System.String.Format("{0} of beer on the wall, {0} of beer.", bottles bottlesNumber) 
 
 let secondLine bottlesNumber =
     match bottlesNumber with
-    | 0 ->
-         "Go to the store and buy some more, 99 bottles of beer on the wall."
-    | _ -> 
-        let toTakeDown =
-            match bottlesNumber with
-            | 1 -> "it"
-            | _ -> "one"
-        let after = bottles (bottlesNumber - 1)
-        sprintf "Take %s down and pass it around, %s of beer on the wall." toTakeDown after
+    | 0 -> "Go to the store and buy some more, 99 bottles of beer on the wall."
+    | 1 -> "Take it down and pass it around, no more bottles of beer on the wall."
+    | _ -> bottles (bottlesNumber - 1) |> sprintf "Take one down and pass it around, %s of beer on the wall."
 
 let verse bottlesNumber =
     [ firstLine bottlesNumber
       secondLine bottlesNumber ]
 
 let recite (startBottles: int) (takeDown: int) =
-    [(startBottles - (takeDown - 1)) .. startBottles]
+    [ (startBottles - (takeDown - 1)) .. startBottles ]
     |> List.rev
     |> List.map verse
-    |> List.reduce (fun acc curr -> acc @ [ "" ] @ curr) 
+    |> List.reduce (fun acc curr -> acc @ [ "" ] @ curr)
