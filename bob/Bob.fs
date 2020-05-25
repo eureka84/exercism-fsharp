@@ -17,9 +17,7 @@ let response (input: string): string =
         input.EndsWith("?") |> toOption
 
     let (|Silence|_|) (input: string) =
-        input
-        |> String.length = 0
-        |> toOption
+        input.Length = 0 |> toOption
 
     match input.Trim() with
     | Silence -> "Fine. Be that way!"
