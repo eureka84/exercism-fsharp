@@ -14,14 +14,14 @@ let response (input: string): string =
         (isUpper && containsLetters) |> toOption
 
     let (|AskingQuestions|_|) (input: string) =
-        input.Trim().EndsWith("?") |> toOption
+        input.EndsWith("?") |> toOption
 
     let (|Silence|_|) (input: string) =
-        input.Trim()
+        input
         |> String.length = 0
         |> toOption
 
-    match input with
+    match input.Trim() with
     | Silence -> "Fine. Be that way!"
     | Shouting & AskingQuestions -> "Calm down, I know what I'm doing!"
     | Shouting -> "Whoa, chill out!"
