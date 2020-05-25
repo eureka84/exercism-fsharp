@@ -24,7 +24,7 @@ let create (hours: int) (minutes: int): Clock =
 let add minutes (clock: Clock) =
     create clock.Hours (clock.Minutes + minutes)
 
-let subtract minutes clock =
+let subtract minutes (clock: Clock) =
     create clock.Hours (clock.Minutes - minutes)
 
 let display (clock: Clock) =
