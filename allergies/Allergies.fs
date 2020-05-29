@@ -3,34 +3,28 @@
 open System
 
 type Allergen =
-    | Eggs = 1
-    | Peanuts = 2
-    | Shellfish = 4
-    | Strawberries = 8
-    | Tomatoes = 16
-    | Chocolate = 32
-    | Pollen = 64
-    | Cats = 128
+    | Eggs = 1             // 0 0 0 0 0 0 0 1
+    | Peanuts = 2          // 0 0 0 0 0 0 1 0  
+    | Shellfish = 4        // 0 0 0 0 0 1 0 0
+    | Strawberries = 8     // 0 0 0 0 1 0 0 0 
+    | Tomatoes = 16        // 0 0 0 1 0 0 0 0 
+    | Chocolate = 32       // 0 0 1 0 0 0 0 0 
+    | Pollen = 64          // 0 1 0 0 0 0 0 0 
+    | Cats = 128           // 1 0 0 0 0 0 0 0
 
-let EnumValues (enumType: Type): int list =
-    let values = Enum.GetValues enumType
-    let lb = values.GetLowerBound 0
-    let ub = values.GetUpperBound 0
-    [ lb .. ub ]
-    |> List.map (fun i -> values.GetValue i :?> int)
-    |> List.sort
-    |> List.rev
+let allergens =
+    Enum.GetValues typeof<Allergen> |> Seq.cast<Allergen>
+
+let isAllergenEncoded codedAllergies allergen =
+    int allergen &&& codedAllergies <> 0
+
+let decodeCodedAllergies codedAllergies =
+    allergens |> Seq.filter (isAllergenEncoded codedAllergies)
+
+let allergicTo codedAllergies allergen =
+    decodeCodedAllergies codedAllergies
+    |> Seq.tryFind ((=) allergen)
+    |> Option.isSome
 
 let list codedAllergies =
-    let rec allergens acc remainingAllergens coded =
-        match remainingAllergens, coded with
-        | [], _ -> acc
-        | _, x when x <=0 -> acc
-        | x :: xs, _ ->
-            if x > coded then allergens acc xs coded else allergens (x :: acc) xs (coded - x)
-    let result  = allergens [] (EnumValues(typeof<Allergen>)) codedAllergies |> List.map enum<Allergen>
-    printfn "%A" result
-    result
-
-let allergicTo (codedAllergies: int) (allergen: Allergen) =
-    list codedAllergies |> List.contains allergen
+    decodeCodedAllergies codedAllergies |> Seq.toList
