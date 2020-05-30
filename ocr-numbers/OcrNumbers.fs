@@ -102,7 +102,7 @@ let convertSingleLine (line: string list): string option =
     |> Option.map (Seq.rev >> Seq.reduce (+))
 
 let splitLines (input: string list): string list list =
-    let rec loop (acc: string list List) (rem: string list) =
+    let rec loop (acc: string list list) (rem: string list) =
         match rem with
         | l when l.Length > 4 -> loop (acc @ [ List.take 4 l ]) (List.skip 4 l)
         | l -> acc @ [ l ]
