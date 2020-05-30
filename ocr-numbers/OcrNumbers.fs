@@ -1,5 +1,6 @@
 module OcrNumbers
 
+
 let numbers = [
     [ " _ ";
       "| |";
@@ -51,7 +52,7 @@ let convertValidCandidate input: string option =
 let toOption b =
     if b then Some() else None
 
-let isValid input =
+let isValid (input: string list): string list option =
     let (|Has4Rows|_|) input = toOption (List.length input = 4)
 
     let lengthDivisibleBy3 str = String.length str % 3 = 0
@@ -75,7 +76,7 @@ let zipToList (a: string seq) (b: string seq): string list seq =
 let zipToList2 (b: string seq) (a: string list seq): string list seq =
     Seq.zip a b |> Seq.map (fun x -> fst x @ [ snd x ])
 
-let split input: string list seq =
+let splitNumbers input: string list seq =
     let chunked = input |> List.map (chunkBySize 3)
     (zipToList chunked.[0] chunked.[1])
     |> zipToList2 chunked.[2]
@@ -95,8 +96,26 @@ let sequence (x: 'a option seq): 'a seq option =
         | None, None -> None
     Seq.fold folder (Some Seq.empty) x
 
-let convert input =
-    isValid input
-    |> Option.map split
-    |> Option.bind (fun x -> Seq.map convertValidCandidate x |> sequence)
+let convertSingleLine (line: string list): string option =
+    splitNumbers line
+    |> Seq.map convertValidCandidate
+    |> sequence
     |> Option.map (fun y -> Seq.rev y |> Seq.reduce (+))
+
+let splitLines (input: string list): string list list =
+    let rec loop (acc: string list List) (rem: string list) =
+        match rem with
+        | l when l.Length > 4 -> loop (acc @ [ List.take 4 l ]) (List.skip 4 l)
+        | l -> acc @ [ l ]
+    loop [] input
+
+let concat a b = sprintf "%s,%s" a b
+
+let convert (input: string list) =
+    let splitLinesAndValidate: string list seq option =
+        splitLines input
+        |> List.map isValid
+        |> sequence
+    splitLinesAndValidate
+    |> Option.bind (fun x -> Seq.map convertSingleLine x |> sequence)
+    |> Option.map (Seq.reduce concat)

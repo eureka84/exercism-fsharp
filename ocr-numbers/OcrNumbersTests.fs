@@ -167,3 +167,38 @@ let ``Numbers separated by empty lines are recognized. Lines are joined by comma
           "         " ]
     convert rows |> should equal (Some "123,456,789")
 
+[<Fact>]
+let ``splitLines``() =
+     let rows = 
+        [ "    _  _ ";
+          "  | _| _|";
+          "  ||_  _|";
+          "         ";
+          "    _  _ ";
+          "|_||_ |_ ";
+          "  | _||_|";
+          "         ";
+          " _  _  _ ";
+          "  ||_||_|";
+          "  ||_| _|";
+          "         " ]
+     let result =  splitLines rows
+     printfn "%A" result
+     result |> should equal [
+        [ "    _  _ ";
+          "  | _| _|";
+          "  ||_  _|";
+          "         "];
+        [
+          "    _  _ ";
+          "|_||_ |_ ";
+          "  | _||_|";
+          "         "]
+        [" _  _  _ ";
+          "  ||_||_|";
+          "  ||_| _|";
+          "         "]
+    ]
+
+
+
