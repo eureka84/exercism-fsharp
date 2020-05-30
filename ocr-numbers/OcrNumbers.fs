@@ -44,7 +44,7 @@ let numbers = [
       "   " ]
 ]
 
-let convertValidCandidate input: string option =
+let toNumber input: string option =
     List.tryFindIndex ((=) input) numbers
     |> Option.map string
     |> Option.orElse (Some "?")
@@ -86,8 +86,7 @@ let sequence (x: 'a option seq): 'a seq option =
     let folder (acc: 'a seq option) (el: 'a option): 'a seq option =
         match acc, el with
         | Some sequence, Some a ->
-            Some
-                (seq {
+            Some (seq {
                     yield a
                     yield! sequence
                  })
@@ -98,7 +97,7 @@ let sequence (x: 'a option seq): 'a seq option =
 
 let convertSingleLine (line: string list): string option =
     splitNumbers line
-    |> Seq.map convertValidCandidate
+    |> Seq.map toNumber
     |> sequence
     |> Option.map (Seq.rev >> Seq.reduce (+))
 
