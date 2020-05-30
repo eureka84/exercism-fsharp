@@ -57,11 +57,11 @@ let isValid (input: string list): string list option =
 
     let lengthDivisibleBy3 str = String.length str % 3 = 0
 
-    let (|ItsColumnsAreAMultipleOf3|_|) (input: string list) =
+    let (|ColumnsNumberIsDivisibleBy3|_|) (input: string list) =
         toOption (List.forall lengthDivisibleBy3 input)
 
     match input with
-    | Has4Rows & ItsColumnsAreAMultipleOf3 -> Some input
+    | Has4Rows & ColumnsNumberIsDivisibleBy3 -> Some input
     | _ -> None
 
 let chunkBySize n str: string seq =
