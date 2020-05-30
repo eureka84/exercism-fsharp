@@ -109,13 +109,13 @@ let splitLines (input: string list): string list list =
         | l -> acc @ [ l ]
     loop [] input
 
-let concat a b = sprintf "%s,%s" a b
+let concat opt1 opt2 =
+    match opt1, opt2 with
+    | Some a, Some b -> Some (sprintf "%s,%s" a b)
+    | _ -> None
 
 let convert (input: string list) =
-    let splitLinesAndValidate: string list seq option =
-        splitLines input
-        |> List.map isValid
-        |> sequence
-    splitLinesAndValidate
-    |> Option.bind (fun x -> Seq.map convertSingleLine x |> sequence)
-    |> Option.map (Seq.reduce concat)
+    splitLines input
+    |> List.map (isValid >> Option.map convertSingleLine)
+    |> sequence
+    |> Option.bind (Seq.rev >> Seq.reduce concat)
