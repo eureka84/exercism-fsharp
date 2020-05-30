@@ -100,7 +100,7 @@ let convertSingleLine (line: string list): string option =
     splitNumbers line
     |> Seq.map convertValidCandidate
     |> sequence
-    |> Option.map (fun y -> Seq.rev y |> Seq.reduce (+))
+    |> Option.map (Seq.rev >> Seq.reduce (+))
 
 let splitLines (input: string list): string list list =
     let rec loop (acc: string list List) (rem: string list) =
