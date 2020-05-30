@@ -67,20 +67,20 @@ let isValid (input: string list): string list option =
 let chunkBySize n str: string seq =
     Seq.chunkBySize n str |> Seq.map (fun arr -> new string(arr))
 
-let zipToList (a: string seq) (b: string seq): string list seq =
+let join2StringSeq (a: string seq) (b: string seq): string list seq =
     Seq.zip a b
     |> Seq.map (fun x ->
         [ fst x
           snd x ])
 
-let zipToList2 (b: string seq) (a: string list seq): string list seq =
+let joinAStringAndAStringList (b: string seq) (a: string list seq): string list seq =
     Seq.zip a b |> Seq.map (fun x -> fst x @ [ snd x ])
 
 let splitNumbers input: string list seq =
     let chunked = input |> List.map (chunkBySize 3)
-    (zipToList chunked.[0] chunked.[1])
-    |> zipToList2 chunked.[2]
-    |> zipToList2 chunked.[3]
+    (join2StringSeq chunked.[0] chunked.[1])
+    |> joinAStringAndAStringList chunked.[2]
+    |> joinAStringAndAStringList chunked.[3]
 
 let sequence (x: 'a option seq): 'a seq option =
     let folder (acc: 'a seq option) (el: 'a option): 'a seq option =
@@ -101,20 +101,13 @@ let convertSingleLine (line: string list): string option =
     |> sequence
     |> Option.map (Seq.rev >> Seq.reduce (+))
 
-let splitLines (input: string list): string list list =
-    let rec loop (acc: string list list) (rem: string list) =
-        match rem with
-        | l when l.Length > 4 -> loop (acc @ [ List.take 4 l ]) (List.skip 4 l)
-        | l -> acc @ [ l ]
-    loop [] input
-
 let concat opt1 opt2 =
     match opt1, opt2 with
     | Some a, Some b -> Some (sprintf "%s,%s" a b)
     | _ -> None
 
 let convert (input: string list) =
-    splitLines input
+    List.chunkBySize 4 input
     |> List.map (isValid >> Option.map convertSingleLine)
     |> sequence
     |> Option.bind (Seq.rev >> Seq.reduce concat)
