@@ -1,6 +1,5 @@
 module OcrNumbers
 
-
 let numbers = [
     [ " _ ";
       "| |";
@@ -49,55 +48,51 @@ let toOption b =
 
 let isValid (input: string list): string list option =
     let (|Has4Rows|_|) input = toOption (List.length input = 4)
-
     let lengthDivisibleBy3 str = String.length str % 3 = 0
-
     let (|ColumnsNumberIsDivisibleBy3|_|) (input: string list) =
         toOption (List.forall lengthDivisibleBy3 input)
 
     match input with
     | Has4Rows & ColumnsNumberIsDivisibleBy3 -> Some input
     | _ -> None
-    
-let toList (arr: char [,]) =
+
+let toList (slice: char [,]) =
     let sliceToString slice =
-         [ for i in slice -> i] |> List.toArray |> fun x -> new string(x)
-    [
-        sliceToString arr.[0, 0..]
-        sliceToString arr.[1, 0..] 
-        sliceToString arr.[2, 0..] 
-        sliceToString arr.[3, 0..] 
-    ]
-let splitNumbers line =
-    let charMatrix =
-        line
-        |> List.map (fun (x: string) -> x.ToCharArray()) 
-        |> array2D
-    
-    let rec loop (acc: char [,] list) (rem: char [, ]) =
+        [ for i in slice -> i ]
+        |> List.toArray
+        |> fun x -> new string(x)
+    [ sliceToString slice.[0, 0..]
+      sliceToString slice.[1, 0..]
+      sliceToString slice.[2, 0..]
+      sliceToString slice.[3, 0..] ]
+
+let getDigitsToConvert (line: string list) =
+    let charMatrix: char [,] =
+        List.map (fun (x: string) -> x.ToCharArray()) line |> array2D
+
+    let rec slice (acc: char [,] list) (rem: char [,]) =
         match rem with
         | a when a.Length = 0 -> acc
-        | _ -> loop (acc @ [rem.[0..3, 0..2]]) rem.[0..3, 3..]
-        
-    loop [] charMatrix
-    |> List.map toList
-   
-let toNumber (input: string list): string =
+        | _ -> slice (acc @ [ rem.[0..3, 0..2] ]) rem.[0..3, 3..]
+
+    slice [] charMatrix |> List.map toList
+
+let toDigit (input: string list): string =
     List.tryFindIndex ((=) input) numbers
     |> Option.map string
     |> Option.defaultValue "?"
-    
+
 let convertSingleLine (line: string list): string =
-    splitNumbers line
-    |> Seq.map toNumber
+    getDigitsToConvert line
+    |> Seq.map toDigit
     |> Seq.reduce (+)
 
 let concat opt1 opt2 =
     match opt1, opt2 with
-    | Some a, Some b -> Some (sprintf "%s,%s" a b)
+    | Some a, Some b -> Some(sprintf "%s,%s" a b)
     | _ -> None
 
 let convert (input: string list) =
     List.chunkBySize 4 input
     |> List.map (isValid >> Option.map convertSingleLine)
-    |> List.reduce concat 
+    |> List.reduce concat
