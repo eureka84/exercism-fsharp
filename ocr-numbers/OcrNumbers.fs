@@ -14,6 +14,9 @@ let toDigit =
     | [ " _ "; "|_|"; " _|"; "   " ] -> "9"
     | _ -> "?"
 
+let digitWidth = 3
+let digitHeight = 4
+
 let zip4 (l1: string list) (l2: string list) (l3: string list) (l4: string list) =
     let zip ll1 ll2 =
         List.zip ll1 ll2 |> List.map (fun p -> fst p :: snd p)
@@ -22,11 +25,11 @@ let zip4 (l1: string list) (l2: string list) (l3: string list) (l4: string list)
     |> zip l2
     |> zip l1
 
-let getDigitsToConvert (line: string list): string list list =
+let getDigitsToConvert (number: string list): string list list =
     let chunked: string list list =
-        line
+        number
         |> List.map
-            (Seq.chunkBySize 3
+            (Seq.chunkBySize digitWidth
              >> Seq.map (fun x -> new string(x))
              >> Seq.toList)
 
@@ -43,11 +46,11 @@ let concat opt1 opt2 =
     | _ -> None
 
 let isValid (input: string list): string list option =
-    let has4Rows input = List.length input = 4
-    let columnsNumberIsDivisibleBy3 (input: string list) =
-        List.forall (fun x -> String.length x % 3 = 0) input
+    let validRows input = List.length input = digitHeight
+    let validCols (input: string list) =
+        List.forall (fun x -> String.length x % digitWidth = 0) input
 
-    if has4Rows input && columnsNumberIsDivisibleBy3 input
+    if validRows input && validCols input
     then Some input
     else None
 
