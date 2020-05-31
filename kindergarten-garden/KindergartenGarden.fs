@@ -32,6 +32,7 @@ let students =
 let splitIn2Lines (s: string) =
     let lines: string [] = s.Split "\n"
     lines.[0], lines.[1]
+    
 let chunkBy2 (s: string) = Seq.chunkBySize 2 s
 
 let concatPairOfArray (pair: char [] * char []) =
