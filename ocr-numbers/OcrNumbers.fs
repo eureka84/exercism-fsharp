@@ -93,24 +93,20 @@ let splitNumbers line =
     loop [] charMatrix
     |> List.map toList
    
-let toNumber (input: string list): string option =
+let toNumber (input: string list): string =
     List.tryFindIndex ((=) input) numbers
     |> Option.map string
-    |> Option.orElse (Some "?")
+    |> Option.defaultValue "?"
     
-let convertSingleLine (line: string list): string option =
+let convertSingleLine (line: string list): string =
     splitNumbers line
     |> Seq.map toNumber
-    |> sequence
-    |> Option.map (Seq.reduce (+))
+    |> Seq.reduce (+)
 
-let concat opt1 opt2 =
-    match opt1, opt2 with
-    | Some a, Some b -> Some (sprintf "%s,%s" a b)
-    | _ -> None
+let concat a b = sprintf "%s,%s" a b
 
 let convert (input: string list) =
     List.chunkBySize 4 input
     |> List.map (isValid >> Option.map convertSingleLine)
     |> sequence
-    |> Option.bind (Seq.reduce concat)
+    |> Option.map (Seq.reduce concat)
