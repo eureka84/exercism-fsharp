@@ -12,45 +12,23 @@ type Plant =
         | 'G' -> Grass
         | 'V' -> Violets
 
-let students =
-    seq {
-        "Alice"
-        "Bob"
-        "Charlie"
-        "David"
-        "Eve"
-        "Fred"
-        "Ginny"
-        "Harriet"
-        "Ileana"
-        "Joseph"
-        "Kincaid"
-        "Larry" }
+let studentsList =
+    [ "Alice"; "Bob"; "Charlie"; "David"; "Eve"; "Fred"; "Ginny"; "Harriet"; "Ileana"; "Joseph"; "Kincaid"; "Larry" ]
 
+let flatten (A: 'a [,]) = A |> Seq.cast<'a>
 
+let studentCups (diagram: string) student =
+    let index = List.findIndex ((=) student) studentsList
 
-let splitIn2Lines (s: string) =
-    let lines: string [] = s.Split "\n"
-    lines.[0], lines.[1]
+    let gardenMatrix =
+        array2D (diagram.Split "\n")
+
+    let startColumn = index * 2
+    let endColumn = index * 2 + 1
     
-let chunkBy2 (s: string) = Seq.chunkBySize 2 s
-
-let concatPairOfArray (pair: char [] * char []) =
-    Array.concat
-        [ (fst pair)
-          (snd pair) ]
-let toPlants (a: char []) = Array.map Plant.from a
-       
-
+    gardenMatrix.[0..1, startColumn..endColumn] |> flatten
+    
 let plants (diagram: string) (student: string) =
-    let firstLine, secondLine = splitIn2Lines diagram
-
-    let studentsPlants =
-        Seq.zip (chunkBy2 firstLine) (chunkBy2 secondLine)
-        |> Seq.map concatPairOfArray
-        |> Seq.map toPlants
-
-    Seq.zip students studentsPlants
-    |> Seq.find (fun x -> (fst x) = student)
-    |> snd
-    |> Array.toList
+    studentCups diagram student
+    |> Seq.map Plant.from
+    |> Seq.toList
