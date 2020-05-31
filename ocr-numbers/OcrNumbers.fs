@@ -59,17 +59,6 @@ let isValid (input: string list): string list option =
     | Has4Rows & ColumnsNumberIsDivisibleBy3 -> Some input
     | _ -> None
     
-let sequence (x: 'a option seq): 'a seq option =
-    let folder (acc: 'a seq option) (el: 'a option): 'a seq option =
-        let append value sequence = seq {
-            yield! sequence
-            yield value
-        }
-        match el with
-        | Some value -> Option.map (append value) acc
-        | None -> None
-    Seq.fold folder (Some Seq.empty) x
-
 let toList (arr: char [,]) =
     let sliceToString slice =
          [ for i in slice -> i] |> List.toArray |> fun x -> new string(x)
@@ -103,10 +92,12 @@ let convertSingleLine (line: string list): string =
     |> Seq.map toNumber
     |> Seq.reduce (+)
 
-let concat a b = sprintf "%s,%s" a b
+let concat opt1 opt2 =
+    match opt1, opt2 with
+    | Some a, Some b -> Some (sprintf "%s,%s" a b)
+    | _ -> None
 
 let convert (input: string list) =
     List.chunkBySize 4 input
     |> List.map (isValid >> Option.map convertSingleLine)
-    |> sequence
-    |> Option.map (Seq.reduce concat)
+    |> List.reduce concat 
