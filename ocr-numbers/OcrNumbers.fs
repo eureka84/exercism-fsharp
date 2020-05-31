@@ -35,8 +35,8 @@ let getDigitsToConvert (number: string list): string list list =
 
     zip4 chunked.[0] chunked.[1] chunked.[2] chunked.[3]
 
-let convertSingleLine (line: string list): string =
-    getDigitsToConvert line
+let convertSingleNumber (number: string list): string =
+    getDigitsToConvert number
     |> Seq.map toDigit
     |> Seq.reduce (+)
 
@@ -56,5 +56,5 @@ let isValid (input: string list): string list option =
 
 let convert (input: string list) =
     List.chunkBySize 4 input
-    |> List.map (isValid >> Option.map convertSingleLine)
+    |> List.map (isValid >> Option.map convertSingleNumber)
     |> List.reduce concat
