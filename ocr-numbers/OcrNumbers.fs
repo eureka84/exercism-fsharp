@@ -76,7 +76,7 @@ let join2StringSeq (a: string seq) (b: string seq): string list seq =
 let joinAStringAndAStringList (b: string seq) (a: string list seq): string list seq =
     Seq.zip a b |> Seq.map (fun x -> fst x @ [ snd x ])
 
-let splitNumbers input: string list seq =
+let splitNumbers (input: string list): string list seq =
     let chunked = input |> List.map (chunkBySize 3)
     (join2StringSeq chunked.[0] chunked.[1])
     |> joinAStringAndAStringList chunked.[2]
@@ -87,8 +87,8 @@ let sequence (x: 'a option seq): 'a seq option =
         match acc, el with
         | Some sequence, Some a ->
             Some (seq {
-                    yield a
                     yield! sequence
+                    yield a
                  })
         | Some _, None
         | None, Some _
@@ -99,7 +99,7 @@ let convertSingleLine (line: string list): string option =
     splitNumbers line
     |> Seq.map toNumber
     |> sequence
-    |> Option.map (Seq.rev >> Seq.reduce (+))
+    |> Option.map (Seq.reduce (+))
 
 let concat opt1 opt2 =
     match opt1, opt2 with
@@ -110,4 +110,4 @@ let convert (input: string list) =
     List.chunkBySize 4 input
     |> List.map (isValid >> Option.map convertSingleLine)
     |> sequence
-    |> Option.bind (Seq.rev >> Seq.reduce concat)
+    |> Option.bind (Seq.reduce concat)
