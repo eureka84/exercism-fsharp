@@ -61,15 +61,13 @@ let isValid (input: string list): string list option =
     
 let sequence (x: 'a option seq): 'a seq option =
     let folder (acc: 'a seq option) (el: 'a option): 'a seq option =
-        match acc, el with
-        | Some sequence, Some a ->
-            Some (seq {
-                    yield! sequence
-                    yield a
-                 })
-        | Some _, None
-        | None, Some _
-        | None, None -> None
+        let append value sequence = seq {
+            yield! sequence
+            yield value
+        }
+        match el with
+        | Some value -> Option.map (append value) acc
+        | None -> None
     Seq.fold folder (Some Seq.empty) x
 
 let toList (arr: char [,]) =
