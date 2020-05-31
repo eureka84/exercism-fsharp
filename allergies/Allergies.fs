@@ -11,20 +11,14 @@ type Allergen =
     | Chocolate = 32       // 0 0 1 0 0 0 0 0 
     | Pollen = 64          // 0 1 0 0 0 0 0 0 
     | Cats = 128           // 1 0 0 0 0 0 0 0
-
+    
 let allergens =
     Enum.GetValues typeof<Allergen> |> Seq.cast<Allergen>
 
-let isAllergenEncoded codedAllergies allergen =
+let allergicTo codedAllergies allergen =
     int allergen &&& codedAllergies <> 0
 
-let decodeCodedAllergies codedAllergies =
-    allergens |> Seq.filter (isAllergenEncoded codedAllergies)
-
-let allergicTo codedAllergies allergen =
-    decodeCodedAllergies codedAllergies
-    |> Seq.tryFind ((=) allergen)
-    |> Option.isSome
-
 let list codedAllergies =
-    decodeCodedAllergies codedAllergies |> Seq.toList
+    allergens
+    |> Seq.filter (allergicTo codedAllergies)
+    |> Seq.toList
