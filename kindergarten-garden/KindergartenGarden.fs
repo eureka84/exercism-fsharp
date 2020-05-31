@@ -1,17 +1,10 @@
 ﻿module KindergartenGarden
 
 type Plant =
-    | Radishes
-    | Clover
-    | Grass
-    | Violets
-
-module Plant =     
-    let from = function
-        | 'R' -> Radishes
-        | 'C' -> Clover
-        | 'G' -> Grass
-        | 'V' -> Violets
+    | Radishes = 'R'
+    | Clover = 'C'
+    | Grass = 'G'
+    | Violets = 'V'
 
 let studentsList =
     [ "Alice"; "Bob"; "Charlie"; "David"; "Eve"; "Fred"; "Ginny"; "Harriet"; "Ileana"; "Joseph"; "Kincaid"; "Larry" ]
@@ -29,7 +22,7 @@ let studentCups (diagram: string) student =
     
     gardenMatrix.[0..1, startColumn..endColumn] |> flatten
     
-let plants (diagram: string) (student: string) =
+let plants (diagram: string) (student: string): Plant list =
     studentCups diagram student
-    |> Seq.map Plant.from
+    |> Seq.map LanguagePrimitives.EnumOfValue
     |> Seq.toList
