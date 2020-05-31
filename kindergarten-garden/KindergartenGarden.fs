@@ -5,8 +5,9 @@ type Plant =
     | Clover
     | Grass
     | Violets
-    static member from(letter) =
-        match letter with
+
+module Plant =     
+    let from = function
         | 'R' -> Radishes
         | 'C' -> Clover
         | 'G' -> Grass
