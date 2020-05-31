@@ -1,47 +1,17 @@
 module OcrNumbers
 
-let numbers = [
-    [ " _ ";
-      "| |";
-      "|_|";
-      "   " ];
-     [ "   ";
-      "  |";
-      "  |";
-      "   " ];
-    [ " _ ";
-      " _|";
-      "|_ ";
-      "   " ]
-    [ " _ ";
-      " _|";
-      " _|";
-      "   " ]
-    [ "   ";
-      "|_|";
-      "  |";
-      "   " ]
-    [ " _ ";
-      "|_ ";
-      " _|";
-      "   " ]
-    [ " _ ";
-      "|_ ";
-      "|_|";
-      "   " ];
-    [ " _ ";
-      "  |";
-      "  |";
-      "   " ]
-    [ " _ ";
-      "|_|";
-      "|_|";
-      "   " ]
-    [ " _ ";
-      "|_|";
-      " _|";
-      "   " ]
-]
+let toDigit = function 
+     | [ " _ "; "| |"; "|_|"; "   " ] -> "0" 
+     | [ "   "; "  |"; "  |"; "   " ] -> "1"
+     | [ " _ "; " _|"; "|_ "; "   " ] -> "2"
+     | [ " _ "; " _|"; " _|"; "   " ] -> "3"
+     | [ "   "; "|_|"; "  |"; "   " ] -> "4"
+     | [ " _ "; "|_ "; " _|"; "   " ] -> "5"
+     | [ " _ "; "|_ "; "|_|"; "   " ] -> "6"
+     | [ " _ "; "  |"; "  |"; "   " ] -> "7"
+     | [ " _ "; "|_|"; "|_|"; "   " ] -> "8"
+     | [ " _ "; "|_|"; " _|"; "   " ] -> "9"
+     | _ -> "?"
 
 let toOption b =
     if b then Some() else None
@@ -76,11 +46,6 @@ let getDigitsToConvert (line: string list) =
         | _ -> slice (acc @ [ rem.[0..3, 0..2] ]) rem.[0..3, 3..]
 
     slice [] charMatrix |> List.map toList
-
-let toDigit (input: string list): string =
-    List.tryFindIndex ((=) input) numbers
-    |> Option.map string
-    |> Option.defaultValue "?"
 
 let convertSingleLine (line: string list): string =
     getDigitsToConvert line
