@@ -1,5 +1,8 @@
 ﻿module RobotSimulator
 
+open System
+open System.Reflection
+
 type Direction =
     | North
     | East
@@ -47,11 +50,44 @@ let private moveForward robot =
     | West -> x - 1, y
     |> changePosition robot
 
-let moveRobot (robot: Robot) (command: char) =
+type Command =
+    | RotateRight
+    | RotateLeft
+    | MoveForward
+
+module Command =
+    let parse = function
+        | 'R' -> Some RotateRight
+        | 'L' -> Some RotateLeft
+        | 'A' -> Some MoveForward
+        | _ -> None 
+
+let moveRobot (robot: Robot) (command: Command) =
     match command with
-    | 'R' -> rotateRight robot
-    | 'L' -> rotateLeft robot
-    | 'A' -> moveForward robot
+    | RotateRight -> rotateRight robot
+    | RotateLeft -> rotateLeft robot
+    | MoveForward -> moveForward robot
+
+let sequence (x: 'a option seq): 'a seq option =
+    let folder (acc: 'a seq option) (el: 'a option): 'a seq option =
+        match acc, el with
+        | Some sequence, Some a ->
+            Some (seq {
+                    yield! sequence
+                    yield a
+                 })
+        | Some _, None
+        | None, Some _
+        | None, None -> None
+    Seq.fold folder (Some Seq.empty) x
+
+let safeMove (instructions: string) (robot: Robot): Robot option =
+    instructions
+    |> Seq.map Command.parse
+    |> sequence
+    |> Option.map (Seq.fold moveRobot robot)
 
 let move (instructions: string) (robot: Robot) =
-    instructions |> Seq.fold moveRobot robot
+    match safeMove instructions robot with
+    | Some r -> r
+    | None -> raise (Exception "Failed to parse")
