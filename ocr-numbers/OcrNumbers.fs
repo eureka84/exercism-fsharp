@@ -26,26 +26,21 @@ let isValid (input: string list): string list option =
     | Has4Rows & ColumnsNumberIsDivisibleBy3 -> Some input
     | _ -> None
 
-let toList (slice: char [,]) =
-    let sliceToString slice =
-        [ for i in slice -> i ]
-        |> List.toArray
-        |> fun x -> new string(x)
-    [ sliceToString slice.[0, 0..]
-      sliceToString slice.[1, 0..]
-      sliceToString slice.[2, 0..]
-      sliceToString slice.[3, 0..] ]
 
-let getDigitsToConvert (line: string list) =
-    let charMatrix: char [,] =
-        List.map (fun (x: string) -> x.ToCharArray()) line |> array2D
-
-    let rec slice (acc: char [,] list) (rem: char [,]) =
-        match rem with
-        | a when a.Length = 0 -> acc
-        | _ -> slice (acc @ [ rem.[0..3, 0..2] ]) rem.[0..3, 3..]
-
-    slice [] charMatrix |> List.map toList
+let zip4 (l1: string list) (l2: string list) (l3: string list) (l4: string list) =
+    let zip (ll1: string list) (ll2: string list list): string list list =
+        List.zip ll1 ll2 |> List.map (fun p -> fst p::snd p)
+    List.zip l3 l4
+    |> List.map (fun p -> fst p::snd p::[])
+    |> zip l2
+    |> zip l1
+    
+    
+let getDigitsToConvert (line: string list): string list list =
+    let chunked: string list list =
+        line |> List.map (Seq.chunkBySize 3 >> Seq.toList >> List.map (fun x-> new string(x)))
+    
+    zip4 chunked.[0] chunked.[1] chunked.[2] chunked.[3]
 
 let convertSingleLine (line: string list): string =
     getDigitsToConvert line
