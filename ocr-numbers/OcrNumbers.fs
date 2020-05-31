@@ -44,11 +44,6 @@ let numbers = [
       "   " ]
 ]
 
-let toNumber input: string option =
-    List.tryFindIndex ((=) input) numbers
-    |> Option.map string
-    |> Option.orElse (Some "?")
-
 let toOption b =
     if b then Some() else None
 
@@ -63,25 +58,7 @@ let isValid (input: string list): string list option =
     match input with
     | Has4Rows & ColumnsNumberIsDivisibleBy3 -> Some input
     | _ -> None
-
-let chunkBySize n str: string seq =
-    Seq.chunkBySize n str |> Seq.map (fun arr -> new string(arr))
-
-let join2StringSeq (a: string seq) (b: string seq): string list seq =
-    Seq.zip a b
-    |> Seq.map (fun x ->
-        [ fst x
-          snd x ])
-
-let joinAStringAndAStringList (b: string seq) (a: string list seq): string list seq =
-    Seq.zip a b |> Seq.map (fun x -> fst x @ [ snd x ])
-
-let splitNumbers (input: string list): string list seq =
-    let chunked = input |> List.map (chunkBySize 3)
-    (join2StringSeq chunked.[0] chunked.[1])
-    |> joinAStringAndAStringList chunked.[2]
-    |> joinAStringAndAStringList chunked.[3]
-
+    
 let sequence (x: 'a option seq): 'a seq option =
     let folder (acc: 'a seq option) (el: 'a option): 'a seq option =
         match acc, el with
@@ -95,6 +72,34 @@ let sequence (x: 'a option seq): 'a seq option =
         | None, None -> None
     Seq.fold folder (Some Seq.empty) x
 
+let toList (arr: char [,]) =
+    let sliceToString slice =
+         [ for i in slice -> i] |> List.toArray |> fun x -> new string(x)
+    [
+        sliceToString arr.[0, 0..]
+        sliceToString arr.[1, 0..] 
+        sliceToString arr.[2, 0..] 
+        sliceToString arr.[3, 0..] 
+    ]
+let splitNumbers line =
+    let charMatrix =
+        line
+        |> List.map (fun (x: string) -> x.ToCharArray()) 
+        |> array2D
+    
+    let rec loop (acc: char [,] list) (rem: char [, ]) =
+        match rem with
+        | a when a.Length = 0 -> acc
+        | _ -> loop (acc @ [rem.[0..3, 0..2]]) rem.[0..3, 3..]
+        
+    loop [] charMatrix
+    |> List.map toList
+   
+let toNumber (input: string list): string option =
+    List.tryFindIndex ((=) input) numbers
+    |> Option.map string
+    |> Option.orElse (Some "?")
+    
 let convertSingleLine (line: string list): string option =
     splitNumbers line
     |> Seq.map toNumber
