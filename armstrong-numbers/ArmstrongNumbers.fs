@@ -1,7 +1,9 @@
 ﻿module ArmstrongNumbers
 
 let digitsOf number =
-    number |> string |> Seq.map (fun x -> new string ([|x|])) |> Seq.map int
+    number
+    |> string
+    |> Seq.map (sprintf "%c" >> int)
 
 let isArmstrongNumber (number: int): bool =
     let digits = digitsOf number
