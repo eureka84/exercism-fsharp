@@ -9,4 +9,5 @@ let isArmstrongNumber (number: int): bool =
 
     digits
     |> Seq.map (fun x -> pown x numOfDigits)
-    |> Seq.sum = number
+    |> Seq.sum
+    |> (=) number
