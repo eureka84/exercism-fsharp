@@ -9,4 +9,4 @@ let private nucleotideComplement = function
     | _ -> failwith "Unknown nucleotide"
 
 let toRna (dna: string): string =
-    dna |> Seq.map nucleotideComplement |> System.String.Concat
+    String.map nucleotideComplement dna
