@@ -2,6 +2,6 @@
 
 open System
 
-let gigaSeconds: TimeSpan = TimeSpan(0, 0, pown 10 9)
+let gigaSeconds = pown 10.0 9
 let add (beginDate: DateTime) =
-    beginDate.Add(gigaSeconds)
+    beginDate.AddSeconds(gigaSeconds)
