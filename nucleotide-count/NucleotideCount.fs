@@ -1,7 +1,8 @@
 ﻿module NucleotideCount
 
-let updateNucleotides (c: char) (nucleotides: Map<char, int>): Map<char, int> option =
-    nucleotides.TryFind c |> Option.map (fun count -> nucleotides.Add(c, count + 1))
+let updateNucleotidesCounts (c: char) (nucleotides: Map<char, int>): Map<char, int> option =
+    nucleotides.TryFind c
+    |> Option.map (fun count -> nucleotides.Add(c, count + 1))
 
 let nucleotideCounts (strand: string): Option<Map<char, int>> =
     let nucleotides =
@@ -10,7 +11,8 @@ let nucleotideCounts (strand: string): Option<Map<char, int>> =
           ('G', 0)
           ('T', 0) ]
         |> Map.ofList
-    let folder acc x = acc |> Option.bind (updateNucleotides x) 
+        
+    let folder acc x = acc |> Option.bind (updateNucleotidesCounts x) 
     
     strand
     |> Seq.fold folder (Some nucleotides)
