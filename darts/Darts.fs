@@ -1,7 +1,7 @@
 ﻿module Darts
 
 let private square (x: double) = x * x
-let private distanceFromZero (x: double) (y: double): double =
+let private distanceFromCenter (x: double) (y: double): double =
     sqrt (square x + square y)
 
 let (|OutOfTarget|InsideOuterCircle|InsideMiddleCircle|InsideInnerCircle|) (d: double) =
@@ -12,7 +12,7 @@ let (|OutOfTarget|InsideOuterCircle|InsideMiddleCircle|InsideInnerCircle|) (d: d
     | _ when (d <= 1.0) -> InsideInnerCircle
 
 let score (x: double) (y: double): int =
-    match distanceFromZero x y with
+    match distanceFromCenter x y with
     | OutOfTarget -> 0
     | InsideOuterCircle -> 1
     | InsideMiddleCircle -> 5
