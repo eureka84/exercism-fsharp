@@ -7,6 +7,5 @@ let private toPairsList (score: int, letters: char list): (char * int) list =
 let transform (scoresWithLetters: Map<int, char list>): Map<char, int> =
     scoresWithLetters
     |> Map.toSeq
-    |> Seq.map toPairsList
-    |> Seq.concat
+    |> Seq.collect toPairsList
     |> Map.ofSeq
