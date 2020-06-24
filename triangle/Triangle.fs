@@ -1,49 +1,50 @@
 ﻿module Triangle
 
-type TrinagleKind = Equilateral | Isosceles | Scalene 
+type TriangleKind =
+    | Equilateral
+    | Isosceles
+    | Scalene
 
-module TrinagleKind =
-    let validate (triangle: double list): (double*double*double) option =
-        if triangle.Length <> 3 then
-            None
-        else
-            match List.sort triangle with
-            | [ a; b; c ] when a + b > c -> Some (a, b, c)
-            | _ -> None
+module TriangleKind =
+    let private validate (triangle: double list): (double * double * double) option =
+        match List.sort triangle with
+        | [ a; b; c ] when a + b > c -> Some(a, b, c)
+        | _ -> None
 
-    let ofGiven (triangle: double list): TrinagleKind option =
+    let ofGiven (triangle: double list): TriangleKind option =
         validate triangle
-        |> Option.map (fun (a , b, c)  ->
+        |> Option.map (fun (a, b, c) ->
             match a, b, c with
             | _ when a = b && b = c -> Equilateral
             | _ when a = b || b = c || a = c -> Isosceles
             | _ -> Scalene)
-    
-    let isIsosceles (triangle: TrinagleKind) =
+
+    let isIsosceles (triangle: TriangleKind) =
         match triangle with
-        | Equilateral | Isosceles -> true
+        | Equilateral
+        | Isosceles -> true
         | Scalene -> false
-    
-    let isEquilateral (triangle: TrinagleKind) =
+
+    let isEquilateral (triangle: TriangleKind) =
         match triangle with
         | Equilateral _ -> true
         | _ -> false
-    
-    let isScalene (triangle: TrinagleKind) =
+
+    let isScalene (triangle: TriangleKind) =
         match triangle with
         | Scalene _ -> true
         | _ -> false
-    
-let private test predicate triangle  =
-    TrinagleKind.ofGiven triangle
+
+let private test predicate triangle =
+    TriangleKind.ofGiven triangle
     |> Option.map predicate
     |> Option.defaultValue false
-    
+
 let equilateral triangle =
-    triangle |> test TrinagleKind.isEquilateral
+    triangle |> test TriangleKind.isEquilateral
 
 let isosceles triangle =
-    triangle |> test TrinagleKind.isIsosceles
+    triangle |> test TriangleKind.isIsosceles
 
 let scalene triangle =
-    triangle |> test TrinagleKind.isScalene
+    triangle |> test TriangleKind.isScalene
