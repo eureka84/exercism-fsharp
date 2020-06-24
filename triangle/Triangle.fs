@@ -1,54 +1,49 @@
 ﻿module Triangle
 
-type Triangle =
-    | Equilateral of l: double
-    | Isosceles of b: double * l: double
-    | Scalene of a: double * b: double * c: double
+type TrinagleKind = Equilateral | Isosceles | Scalene 
 
-module Triangle =
-    let validate (triangle: double list): double list option =
+module TrinagleKind =
+    let validate (triangle: double list): (double*double*double) option =
         if triangle.Length <> 3 then
             None
         else
-            match triangle with
-            | [ a; b; c ] when (a + b > c && a + c > b && b + c > a) -> Some triangle
+            match List.sort triangle with
+            | [ a; b; c ] when a + b > c -> Some (a, b, c)
             | _ -> None
 
-    let create (triangle: double list): Triangle option =
+    let ofGiven (triangle: double list): TrinagleKind option =
         validate triangle
-        |> Option.map (fun [ a; b; c ] ->
+        |> Option.map (fun (a , b, c)  ->
             match a, b, c with
-            | _ when (a = b && b = c) -> Equilateral a
-            | _ when a = b -> Isosceles(c, a)
-            | _ when b = c -> Isosceles(a, b)
-            | _ when a = c -> Isosceles(b, a)
-            | _ -> Scalene(a, b, c))
+            | _ when a = b && b = c -> Equilateral
+            | _ when a = b || b = c || a = c -> Isosceles
+            | _ -> Scalene)
     
-    let isIsosceles (triangle: Triangle) =
+    let isIsosceles (triangle: TrinagleKind) =
         match triangle with
-        | Scalene _ -> false
-        | _ -> true
+        | Equilateral | Isosceles -> true
+        | Scalene -> false
     
-    let isEquilateral (triangle: Triangle) =
+    let isEquilateral (triangle: TrinagleKind) =
         match triangle with
         | Equilateral _ -> true
         | _ -> false
     
-    let isScalene (triangle: Triangle) =
+    let isScalene (triangle: TrinagleKind) =
         match triangle with
         | Scalene _ -> true
         | _ -> false
     
-let private test triangle predicate =
-    Triangle.create triangle
+let private test predicate triangle  =
+    TrinagleKind.ofGiven triangle
     |> Option.map predicate
     |> Option.defaultValue false
     
 let equilateral triangle =
-    test triangle Triangle.isEquilateral
+    triangle |> test TrinagleKind.isEquilateral
 
 let isosceles triangle =
-    test triangle Triangle.isIsosceles
+    triangle |> test TrinagleKind.isIsosceles
 
 let scalene triangle =
-    test triangle Triangle.isScalene
+    triangle |> test TrinagleKind.isScalene
